@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Notes</string>
     <string name="action_settings">Settings</string>
+    <string name="title">Заголовок</string>
+    <string name="description">Описание</string>
+    <string name="note_title">Добавить заметку</string>
+    <string name="add">Добавить</string>
+    <string name="cancel">Отмена</string>
 </resources>
