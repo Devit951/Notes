@@ -1,27 +1,61 @@
 package com.ru.devit.notes.presentation.notes;
 
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ru.devit.notes.R;
+import com.ru.devit.notes.data.NoteLocalRepository;
+import com.ru.devit.notes.models.model.Note;
+import com.ru.devit.notes.presentation.NoteApp;
+import com.ru.devit.notes.presentation.NoteRepository;
+import com.ru.devit.notes.presentation.base.BaseActivity;
+import com.ru.devit.notes.presentation.noteadddialog.NoteAddDialog;
 
-public class NotesActivity extends AppCompatActivity {
+import java.util.List;
+
+public class NotesActivity extends BaseActivity implements NotesPresenter.View , NoteAddDialog.NoteAddDialogListener {
 
     private FloatingActionButton mFABAddNote;
+    private RecyclerView mRecyclerViewNotes;
+    private NotesAdapter adapter;
+    private NoteRepository repository;
+    private NotesPresenter presenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
 
-        mFABAddNote = findViewById(R.id.fab);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFABAddNote.setOnClickListener(v -> {
+            NoteAddDialog noteAddDialog = new NoteAddDialog();
+            noteAddDialog.show(getSupportFragmentManager() , "TAG");
+        });
+    }
+
+    @Override
+    public void onAddBtnFromDialogClicked(String noteTitle, String noteDesc) {
+        presenter.onAddBtnClicked(noteTitle , noteDesc);
+    }
+
+    @Override
+    public void showAllNotes(List<Note> notes) {
+        adapter.addAll(notes);
+    }
+
+    @Override
+    public void showDetailedNote(int noteId) {
+
+    }
+
+    @Override
+    public void addNote(Note note){
+        adapter.addNote(note);
     }
 
     @Override
@@ -34,5 +68,37 @@ public class NotesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void initViews() {
+        mFABAddNote = findViewById(R.id.fab_add_note);
+        mRecyclerViewNotes = findViewById(R.id.rv_notes);
+        initAdapter();
+    }
+
+    @Override
+    protected void initPresenter() {
+        initRepository();
+        presenter = new NotesPresenter(repository);
+        presenter.initView(this);
+        presenter.subscribeToData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
+    }
+
+    private void initAdapter() {
+        adapter = new NotesAdapter(noteId -> presenter.onNoteClicked(noteId));
+        mRecyclerViewNotes.setAdapter(adapter);
+        mRecyclerViewNotes.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void initRepository() {
+        NoteApp noteApp = (NoteApp) getApplicationContext();
+        repository = new NoteLocalRepository(noteApp.getDatabase().noteDao());
     }
 }
