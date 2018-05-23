@@ -1,8 +1,12 @@
 package com.ru.devit.notes.presentation.notes;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,6 +17,7 @@ import com.ru.devit.notes.presentation.NoteApp;
 import com.ru.devit.notes.presentation.NoteRepository;
 import com.ru.devit.notes.presentation.base.BaseActivity;
 import com.ru.devit.notes.presentation.noteadddialog.NoteAddDialog;
+import com.ru.devit.notes.presentation.notedetail.NoteDetailActivity;
 
 import java.util.List;
 
@@ -26,7 +31,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_main;
+        return R.layout.activity_notes;
     }
 
     @Override
@@ -39,8 +44,14 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     }
 
     @Override
-    public void onAddBtnFromDialogClicked(String noteTitle, String noteDesc) {
-        presenter.onAddBtnClicked(noteTitle , noteDesc);
+    protected void onStop() {
+        mFABAddNote.setOnClickListener(null);
+        super.onStop();
+    }
+
+    @Override
+    public void onAddBtnFromDialogClicked(String noteTitle, String noteDesc , String imgPath , int noteColor) {
+        presenter.onAddBtnClicked(noteTitle , noteDesc , imgPath , noteColor);
     }
 
     @Override
@@ -50,12 +61,39 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
 
     @Override
     public void showDetailedNote(int noteId) {
-
+        Intent intent = NoteDetailActivity.makeIntent(NotesActivity.this , noteId);
+        startActivity(intent);
     }
 
     @Override
     public void addNote(Note note){
         adapter.addNote(note);
+    }
+
+    @Override
+    public void notesCleared(){
+        adapter.clearNotes();
+        Snackbar snackbar = Snackbar
+                .make(mRecyclerViewNotes ,
+                        getString(R.string.message_successfully_notes_deleted) ,
+                        Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.colorRed));
+        snackbar.show();
+    }
+
+    @Override
+    public void showMessageTitleAndDescNotBeEmpty(){
+        Snackbar.make(mFABAddNote , getString(R.string.message_error_note) , Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSuccessfullyNoteAdded(){
+        Snackbar snackbar = Snackbar
+                .make(mRecyclerViewNotes ,
+                        getString(R.string.message_successfully_note_added) ,
+                        Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        snackbar.show();
     }
 
     @Override
@@ -67,6 +105,9 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_clear_database){
+            presenter.onActionClearDatabase();
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -5,21 +5,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="4dp">
 
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?android:selectableItemBackground">
+
+        <View
+            android:id="@+id/colored_sticky"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/holo_red_light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:10"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_note_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="24sp"
             app:layout_constraintEnd_toStartOf="@+id/iv_note"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/colored_sticky"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Bob Mark" />
 
@@ -28,11 +42,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:maxLines="2"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_note"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/colored_sticky"
             app:layout_constraintTop_toBottomOf="@+id/tv_note_title"
             tools:text="Happy birthday to Bob and gift them new telephone with finger print" />
 
@@ -40,7 +57,6 @@
             android:id="@+id/iv_note"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
             android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@id/guideline"
             app:layout_constraintDimensionRatio="1:1"

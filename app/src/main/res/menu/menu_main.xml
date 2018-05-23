@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.ru.devit.notes.presentation.notes.NotesActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/action_clear_database"
+        android:title="@string/action_clear_notes"
         app:showAsAction="never" />
 </menu>

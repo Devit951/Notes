@@ -12,5 +12,7 @@ public interface NoteRepository {
 
     Flowable<Note> getNoteById(final int noteId);
 
+    void clearDatabase();
+
     void insertNote(Note note);
 }

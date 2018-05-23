@@ -6,4 +6,10 @@
     <string name="note_title">Добавить заметку</string>
     <string name="add">Добавить</string>
     <string name="cancel">Отмена</string>
+    <string name="select_image">Выберите изображения</string>
+    <string name="action_clear_notes">Очистить заметки</string>
+    <string name="pick_up_image_from_gallery">Выберите изображение из галереи</string>
+    <string name="message_error_note">Заголовок , описание и изображение не должны быть пустыми</string>
+    <string name="message_successfully_note_added">Запись успешно добавлена</string>
+    <string name="message_successfully_notes_deleted">Записи успешно удалены</string>
 </resources>
