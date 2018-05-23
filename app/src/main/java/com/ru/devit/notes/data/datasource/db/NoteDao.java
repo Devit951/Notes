@@ -8,18 +8,20 @@ import com.ru.devit.notes.models.db.NoteEntity;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 
 @Dao
 public interface NoteDao {
 
     @Query("SELECT * FROM note_table")
-    Flowable<List<NoteEntity>> getAllNotes();
+    Single<List<NoteEntity>> getAllNotes();
 
     @Query("SELECT * FROM note_table WHERE noteId = :noteId")
-    Flowable<NoteEntity> getNoteById(int noteId);
+    Single<NoteEntity> getNoteById(int noteId);
 
     @Insert
     void insertNote(NoteEntity noteEntity);
+
+    @Query("DELETE FROM note_table")
+    void clearDatabase();
 }

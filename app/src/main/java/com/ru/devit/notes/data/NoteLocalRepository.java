@@ -1,5 +1,7 @@
 package com.ru.devit.notes.data;
 
+import android.util.Log;
+
 import com.ru.devit.notes.data.datasource.db.NoteDao;
 import com.ru.devit.notes.models.db.NoteEntity;
 import com.ru.devit.notes.models.model.Note;
@@ -10,8 +12,8 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
 public class NoteLocalRepository implements NoteRepository {
@@ -29,7 +31,8 @@ public class NoteLocalRepository implements NoteRepository {
         return noteDao.getAllNotes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(mapper::toNoteList);
+                .map(mapper::toNoteList)
+                .toFlowable();
     }
 
     @Override
@@ -37,11 +40,23 @@ public class NoteLocalRepository implements NoteRepository {
         return noteDao.getNoteById(noteId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(mapper::toNote);
+                .map(mapper::toNote)
+                .toFlowable();
+    }
+
+    @Override
+    public void clearDatabase() {
+        doBackgroundTask(noteDao::clearDatabase);
     }
 
     @Override
     public void insertNote(Note note) {
-        Completable.fromAction(() -> noteDao.insertNote(mapper.fromNote(note)));
+        doBackgroundTask(() -> noteDao.insertNote(mapper.fromNote(note)));
+    }
+
+    private void doBackgroundTask(Action action){
+        Completable.fromAction(action)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
     }
 }
