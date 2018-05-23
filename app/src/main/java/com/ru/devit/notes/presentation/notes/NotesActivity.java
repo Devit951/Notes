@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.ru.devit.notes.R;
 import com.ru.devit.notes.data.NoteLocalRepository;
@@ -25,6 +27,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
 
     private FloatingActionButton mFABAddNote;
     private RecyclerView mRecyclerViewNotes;
+    private ProgressBar mProgressBarNotes;
     private NotesAdapter adapter;
     private NoteRepository repository;
     private NotesPresenter presenter;
@@ -71,7 +74,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     }
 
     @Override
-    public void notesCleared(){
+    public void clearNotes(){
         adapter.clearNotes();
         Snackbar snackbar = Snackbar
                 .make(mRecyclerViewNotes ,
@@ -97,6 +100,16 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     }
 
     @Override
+    public void showLoading() {
+        mProgressBarNotes.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        mProgressBarNotes.setVisibility(View.GONE);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -115,6 +128,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     protected void initViews() {
         mFABAddNote = findViewById(R.id.fab_add_note);
         mRecyclerViewNotes = findViewById(R.id.rv_notes);
+        mProgressBarNotes = findViewById(R.id.pb_notes);
         initAdapter();
     }
 

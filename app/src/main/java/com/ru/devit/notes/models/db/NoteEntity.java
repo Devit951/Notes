@@ -13,7 +13,6 @@ public class NoteEntity {
     private final String title;
     private final String description;
     private final int noteColor;
-    private String imgPath;
 
     public NoteEntity(int noteId, String title, String description , int noteColor) {
         this.noteId = noteId;
@@ -32,14 +31,6 @@ public class NoteEntity {
 
     public String getDescription() {
         return description;
-    }
-
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
-    public String getImgPath() {
-        return imgPath;
     }
 
     public int getNoteColor(){

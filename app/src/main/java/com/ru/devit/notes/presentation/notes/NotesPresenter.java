@@ -1,5 +1,7 @@
 package com.ru.devit.notes.presentation.notes;
 
+import android.util.Log;
+
 import com.ru.devit.notes.models.model.Note;
 import com.ru.devit.notes.presentation.NoteRepository;
 import com.ru.devit.notes.presentation.base.BasePresenter;
@@ -16,8 +18,12 @@ public class NotesPresenter extends BasePresenter<NotesPresenter.View> {
     }
 
     void subscribeToData(){
+        getView().showLoading();
         addDisposable(repository.getAllNotes()
-                .subscribe(notes -> getView().showAllNotes(notes)));
+                .subscribe(notes -> {
+                    getView().hideLoading();
+                    getView().showAllNotes(notes);
+                }));
     }
 
     void onNoteClicked(int noteId) {
@@ -28,16 +34,18 @@ public class NotesPresenter extends BasePresenter<NotesPresenter.View> {
         if (!validateNote(noteTitle, noteDesc , imgPath)) {
             return;
         }
-        Note note = new Note(0 , noteTitle , noteDesc , noteColor);
-        note.setImagePath(imgPath);
-        repository.insertNote(note);
-        getView().addNote(note);
-        getView().showSuccessfullyNoteAdded();
+        final Note note = new Note(0 , noteTitle , noteDesc , noteColor);
+        repository.insertNote(note)
+                .subscribe(id -> {
+                    note.setNoteId(id.intValue());
+                    getView().addNote(note);
+                    getView().showSuccessfullyNoteAdded();
+                });
     }
 
     void onActionClearDatabase() {
         repository.clearDatabase();
-        getView().notesCleared();
+        getView().clearNotes();
     }
 
     private boolean validateNote(String noteTitle, String noteDesc , String imgPath) {
@@ -52,9 +60,11 @@ public class NotesPresenter extends BasePresenter<NotesPresenter.View> {
         void showAllNotes(List<Note> notes);
         void showDetailedNote(final int noteId);
         void addNote(Note note);
-        void notesCleared();
+        void clearNotes();
         void showMessageTitleAndDescNotBeEmpty();
         void showSuccessfullyNoteAdded();
+        void showLoading();
+        void hideLoading();
     }
 
 }

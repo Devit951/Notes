@@ -13,10 +13,7 @@ public class NoteEntityToNote {
         final String title = noteEntity.getTitle();
         final String desc = noteEntity.getDescription();
         final int noteColor = noteEntity.getNoteColor();
-        final String imgPaths = noteEntity.getImgPath();
-        Note note = new Note(noteId, title, desc , noteColor);
-        note.setImagePath(imgPaths);
-        return note;
+        return new Note(noteId, title, desc , noteColor);
     }
 
     public List<Note> toNoteList(List<NoteEntity> entities){
@@ -26,9 +23,7 @@ public class NoteEntityToNote {
             final String title = noteEntity.getTitle();
             final String desc = noteEntity.getDescription();
             final int noteColor = noteEntity.getNoteColor();
-            final String imgPaths = noteEntity.getImgPath();
             final Note note = new Note(noteId , title , desc , noteColor);
-            note.setImagePath(imgPaths);
             notes.add(note);
         }
         return notes;
@@ -39,9 +34,6 @@ public class NoteEntityToNote {
         final String title = note.getTitle();
         final String desc = note.getDescription();
         final int noteColor = note.getNoteColor();
-        final String imgPaths = note.getImagePath();
-        NoteEntity noteEntity = new NoteEntity(noteId, title, desc , noteColor);
-        noteEntity.setImgPath(imgPaths);
-        return noteEntity;
+        return new NoteEntity(noteId, title, desc , noteColor);
     }
 }

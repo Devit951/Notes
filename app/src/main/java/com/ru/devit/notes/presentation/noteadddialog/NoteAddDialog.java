@@ -40,10 +40,12 @@ public class NoteAddDialog extends DialogFragment {
     private ImageSaverToDisk imageSaverToDisk;
     private Uri resultImagePath;
     private static final int REQUEST_CODE_MULTIPLY_IMAGE = 24;
-    private static final int PERMISSION_READ_WRITE_REQUEST_CODE = 56;
+    private static final int PERMISSION_READ_WRITE_REQUEST_CODE = 25;
 
     public interface NoteAddDialogListener {
+        void showLoading();
         void onAddBtnFromDialogClicked(String noteTitle , String noteDesc , String imgPath , int noteColor);
+        void hideLoading();
     }
 
     @Override
@@ -92,10 +94,17 @@ public class NoteAddDialog extends DialogFragment {
                             listener.onAddBtnFromDialogClicked("", "" , null , 0);
                             return;
                         }
+                        listener.showLoading();
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver() ,
                                 resultImagePath);
                         imageSaverToDisk.saveImage(bitmap , noteTitle)
-                                .subscribe(() -> listener.onAddBtnFromDialogClicked(noteTitle, noteDesc , resultImagePath.toString() , RandomColor.generetaRandomColor()));
+                                .subscribe(() -> {
+                                    listener.onAddBtnFromDialogClicked(noteTitle ,
+                                            noteDesc ,
+                                            resultImagePath.toString() ,
+                                            RandomColor.generetaRandomColor());
+                                    listener.hideLoading();
+                                });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

@@ -20,7 +20,7 @@ public interface NoteDao {
     Single<NoteEntity> getNoteById(int noteId);
 
     @Insert
-    void insertNote(NoteEntity noteEntity);
+    long insertNote(NoteEntity noteEntity);
 
     @Query("DELETE FROM note_table")
     void clearDatabase();

@@ -9,9 +9,11 @@ import com.ru.devit.notes.models.model.mapper.NoteEntityToNote;
 import com.ru.devit.notes.presentation.NoteRepository;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
@@ -46,17 +48,18 @@ public class NoteLocalRepository implements NoteRepository {
 
     @Override
     public void clearDatabase() {
-        doBackgroundTask(noteDao::clearDatabase);
+        doBackgroundTask(noteDao::clearDatabase).subscribe();
     }
 
     @Override
-    public void insertNote(Note note) {
-        doBackgroundTask(() -> noteDao.insertNote(mapper.fromNote(note)));
+    public Single<Long> insertNote(Note note) {
+        return Single.fromCallable(() -> noteDao.insertNote(mapper.fromNote(note)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private void doBackgroundTask(Action action){
-        Completable.fromAction(action)
-                .subscribeOn(Schedulers.io())
-                .subscribe();
+    private Completable doBackgroundTask(Action action){
+        return Completable.fromAction(action)
+                .subscribeOn(Schedulers.io());
     }
 }

@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class Note {
-    private final int noteId;
+    private int noteId;
     private final String title;
     private final String description;
     private final int noteColor;
-    private String imgPath;
 
     public Note(int noteId, String title, String description , int noteColor) {
         this.noteId = noteId;
@@ -26,6 +25,10 @@ public class Note {
         return noteId;
     }
 
+    public void setNoteId(int noteId) {
+        this.noteId = noteId;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -34,15 +37,8 @@ public class Note {
         return description;
     }
 
-    public void setImagePath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
-    public String getImagePath() {
-        return imgPath;
-    }
-
     public int getNoteColor() {
         return noteColor;
     }
+
 }
