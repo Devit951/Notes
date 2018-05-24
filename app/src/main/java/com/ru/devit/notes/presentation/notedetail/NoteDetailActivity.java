@@ -2,12 +2,12 @@ package com.ru.devit.notes.presentation.notedetail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ru.devit.notes.R;
 import com.ru.devit.notes.data.NoteLocalRepository;
@@ -15,11 +15,12 @@ import com.ru.devit.notes.models.model.Note;
 import com.ru.devit.notes.presentation.NoteApp;
 import com.ru.devit.notes.presentation.NoteRepository;
 import com.ru.devit.notes.presentation.base.BaseActivity;
+import com.ru.devit.notes.presentation.utils.RandomColor;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-public class NoteDetailActivity extends BaseActivity implements NoteDetailPresenter.View{
+public class NoteDetailActivity extends BaseActivity implements NoteDetailPresenter.View , NoteEditDialog.NoteEditDialogListener {
 
     private static final String NOTE_ID = "note_id";
 
@@ -41,13 +42,63 @@ public class NoteDetailActivity extends BaseActivity implements NoteDetailPresen
     }
 
     @Override
+    public void onPositiveBtnFromDialogClicked(String noteTitle , String noteDesc){
+        presenter.onPositiveBtnFromDialogClicked(noteTitle , noteDesc);
+    }
+
+    @Override
     public void showNoteDetail(Note note){
         renderImage(note.getTitle());
         getToolbar().setTitle(note.getTitle());
-        Log.d("test" , "color = " + note.getNoteColor());
-        getToolbar().setBackgroundColor(note.getNoteColor());
+        getToolbar().setBackgroundColor(RandomColor.getColor(note.getNoteColor()));
         mTextViewNoteTitle.setText(note.getTitle());
         mTextViewNoteDesc.setText(note.getDescription());
+    }
+
+    @Override
+    public void openNoteEditDialog(){
+        NoteEditDialog dialog = NoteEditDialog.newInstance(mTextViewNoteTitle.getText().toString(),
+                                                           mTextViewNoteDesc.getText().toString());
+        dialog.show(getSupportFragmentManager() , "TAG2");
+    }
+
+    @Override
+    public void finishView(){
+        Toast.makeText(this , getString(R.string.message_successfully_note_deleted) , Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    @Override
+    public void onDialogDismissed(){
+        recreate();
+    }
+
+    @Override
+    public void showNoteTitleNotBeEquals(){
+        Toast.makeText(this , getString(R.string.message_note_title_not_equals) , Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showSuccessfullyNoteEdited() {
+        Toast.makeText(this , getString(R.string.message_successfully_note_edited) , Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_note_detail, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_delete_note){
+            presenter.onDeleteNoteAction();
+        }
+        if (id == R.id.action_edit_note){
+            presenter.onEditNoteAction();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -55,6 +106,9 @@ public class NoteDetailActivity extends BaseActivity implements NoteDetailPresen
         mImageViewNote = findViewById(R.id.iv_note_detail_background);
         mTextViewNoteTitle = findViewById(R.id.tv_note_detail_title);
         mTextViewNoteDesc = findViewById(R.id.tv_note_detail_desc);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -78,7 +132,6 @@ public class NoteDetailActivity extends BaseActivity implements NoteDetailPresen
         Picasso.get()
                 .load(myImageFile)
                 .fit()
-                .centerCrop()
                 .into(mImageViewNote);
     }
 

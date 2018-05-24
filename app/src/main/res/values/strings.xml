@@ -10,6 +10,14 @@
     <string name="action_clear_notes">Очистить заметки</string>
     <string name="pick_up_image_from_gallery">Выберите изображение из галереи</string>
     <string name="message_error_note">Заголовок , описание и изображение не должны быть пустыми</string>
-    <string name="message_successfully_note_added">Запись успешно добавлена</string>
-    <string name="message_successfully_notes_deleted">Записи успешно удалены</string>
+    <string name="message_successfully_note_added">Заметка успешно добавлена</string>
+    <string name="message_successfully_notes_deleted">Заметки успешно удалены</string>
+    <string name="message_successfully_note_deleted">Заметка успешно удалена</string>
+    <string name="action_clear_note">Удалить заметку</string>
+    <string name="action_edit_note">Редактировать заметку</string>
+    <string name="edit_note">Редактировать заметку</string>
+    <string name="edit">Редактировать</string>
+    <string name="message_empty_screen">У вас ещё нету заметок , чтобы добавить их нажмите в правом нижнем углу кнопку +</string>
+    <string name="message_note_title_not_equals">Заголовки должны быть разными</string>
+    <string name="message_successfully_note_edited">Заметка успешна обновлена</string>
 </resources>

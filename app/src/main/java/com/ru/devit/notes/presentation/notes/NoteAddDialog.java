@@ -3,7 +3,6 @@ package com.ru.devit.notes.presentation.noteadddialog;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,8 +25,6 @@ import com.ru.devit.notes.presentation.utils.RandomColor;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -39,18 +36,24 @@ public class NoteAddDialog extends DialogFragment {
     private NoteAddDialogListener listener;
     private ImageSaverToDisk imageSaverToDisk;
     private Uri resultImagePath;
+    private View mRootView;
     private static final int REQUEST_CODE_MULTIPLY_IMAGE = 24;
     private static final int PERMISSION_READ_WRITE_REQUEST_CODE = 25;
 
     public interface NoteAddDialogListener {
         void showLoading();
-        void onAddBtnFromDialogClicked(String noteTitle , String noteDesc , String imgPath , int noteColor);
+        void onPositiveBtnFromDialogClicked(String noteTitle , String noteDesc , String imgPath , int noteColor);
         void hideLoading();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mRootView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_add_note , null);
+        mEditTextTitle = mRootView.findViewById(R.id.et_note_title);
+        mEditTextDesc = mRootView.findViewById(R.id.et_note_desc);
+        mImageViewFromGallery = mRootView.findViewById(R.id.iv_image_from_gallery);
+        mBtnPickUpFromGallery = mRootView.findViewById(R.id.btn_pick_up_image_from_gallery);
         imageSaverToDisk = new ImageSaverToDisk();
     }
 
@@ -72,26 +75,20 @@ public class NoteAddDialog extends DialogFragment {
 
         requestPermission();
 
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_add_note , null);
-        mEditTextTitle = view.findViewById(R.id.et_note_title);
-        mEditTextDesc = view.findViewById(R.id.et_note_desc);
-        mImageViewFromGallery = view.findViewById(R.id.iv_image_from_gallery);
-        mBtnPickUpFromGallery = view.findViewById(R.id.btn_pick_up_image_from_gallery);
-
         mBtnPickUpFromGallery.setOnClickListener(v -> {
             selectPictureFromGallery();
             mBtnPickUpFromGallery.setVisibility(View.GONE);
             mImageViewFromGallery.setVisibility(View.VISIBLE);
         });
-        builder.setView(view)
+        builder.setView(mRootView)
                 .setTitle(getString(R.string.note_title))
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.add), (dialogInterface, i) -> {
                     String noteTitle = mEditTextTitle.getText().toString();
                     String noteDesc = mEditTextDesc.getText().toString();
                     try {
-                        if (resultImagePath == null){
-                            listener.onAddBtnFromDialogClicked("", "" , null , 0);
+                        if (resultImagePath == null && noteTitle.isEmpty() || noteDesc.isEmpty()){
+                            listener.onPositiveBtnFromDialogClicked("", "" , null , 0);
                             return;
                         }
                         listener.showLoading();
@@ -99,7 +96,7 @@ public class NoteAddDialog extends DialogFragment {
                                 resultImagePath);
                         imageSaverToDisk.saveImage(bitmap , noteTitle)
                                 .subscribe(() -> {
-                                    listener.onAddBtnFromDialogClicked(noteTitle ,
+                                    listener.onPositiveBtnFromDialogClicked(noteTitle ,
                                             noteDesc ,
                                             resultImagePath.toString() ,
                                             RandomColor.generetaRandomColor());

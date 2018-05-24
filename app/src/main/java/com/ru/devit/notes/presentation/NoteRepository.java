@@ -12,10 +12,11 @@ import io.reactivex.Single;
 public interface NoteRepository {
 
     Flowable<List<Note>> getAllNotes();
-
     Flowable<Note> getNoteById(final int noteId);
+    Single<Long> insertNote(Note note);
 
+    void deleteNoteById(int noteId);
     void clearDatabase();
 
-    Single<Long> insertNote(Note note);
+    void updateNoteById(int noteId, String noteTitle, String noteDesc);
 }
