@@ -1,4 +1,4 @@
-package com.ru.devit.notes.presentation.noteadddialog;
+package com.ru.devit.notes.presentation.notes;
 
 import android.Manifest;
 import android.app.AlertDialog;

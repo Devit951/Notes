@@ -6,11 +6,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ru.devit.notes.R;
 import com.ru.devit.notes.data.NoteLocalRepository;
@@ -18,7 +18,6 @@ import com.ru.devit.notes.models.model.Note;
 import com.ru.devit.notes.presentation.NoteApp;
 import com.ru.devit.notes.presentation.NoteRepository;
 import com.ru.devit.notes.presentation.base.BaseActivity;
-import com.ru.devit.notes.presentation.noteadddialog.NoteAddDialog;
 import com.ru.devit.notes.presentation.notedetail.NoteDetailActivity;
 
 import java.util.List;
@@ -31,6 +30,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     private NotesAdapter adapter;
     private NoteRepository repository;
     private NotesPresenter presenter;
+    private TextView mTextViewEmptyScreen;
 
     @Override
     protected int getLayoutId() {
@@ -44,6 +44,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
             NoteAddDialog noteAddDialog = new NoteAddDialog();
             noteAddDialog.show(getSupportFragmentManager() , "TAG");
         });
+        presenter.subscribeToData();
     }
 
     @Override
@@ -53,7 +54,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
     }
 
     @Override
-    public void onAddBtnFromDialogClicked(String noteTitle, String noteDesc , String imgPath , int noteColor) {
+    public void onPositiveBtnFromDialogClicked(String noteTitle, String noteDesc , String imgPath , int noteColor) {
         presenter.onAddBtnClicked(noteTitle , noteDesc , imgPath , noteColor);
     }
 
@@ -70,6 +71,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
 
     @Override
     public void addNote(Note note){
+        mTextViewEmptyScreen.setVisibility(View.GONE);
         adapter.addNote(note);
     }
 
@@ -97,6 +99,11 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
                         Snackbar.LENGTH_SHORT);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         snackbar.show();
+    }
+
+    @Override
+    public void showEmptyScreen(){
+        mTextViewEmptyScreen.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -129,6 +136,7 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
         mFABAddNote = findViewById(R.id.fab_add_note);
         mRecyclerViewNotes = findViewById(R.id.rv_notes);
         mProgressBarNotes = findViewById(R.id.pb_notes);
+        mTextViewEmptyScreen = findViewById(R.id.text_empty_screen);
         initAdapter();
     }
 
@@ -137,7 +145,6 @@ public class NotesActivity extends BaseActivity implements NotesPresenter.View ,
         initRepository();
         presenter = new NotesPresenter(repository);
         presenter.initView(this);
-        presenter.subscribeToData();
     }
 
     @Override

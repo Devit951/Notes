@@ -21,9 +21,11 @@ public class NotesPresenter extends BasePresenter<NotesPresenter.View> {
         getView().showLoading();
         addDisposable(repository.getAllNotes()
                 .subscribe(notes -> {
-                    getView().hideLoading();
+                    if (notes.isEmpty()){
+                        getView().showEmptyScreen();
+                    }
                     getView().showAllNotes(notes);
-                }));
+                } , throwable -> getView().hideLoading(), () -> getView().hideLoading()));
     }
 
     void onNoteClicked(int noteId) {
@@ -35,12 +37,12 @@ public class NotesPresenter extends BasePresenter<NotesPresenter.View> {
             return;
         }
         final Note note = new Note(0 , noteTitle , noteDesc , noteColor);
-        repository.insertNote(note)
+        addDisposable(repository.insertNote(note)
                 .subscribe(id -> {
                     note.setNoteId(id.intValue());
                     getView().addNote(note);
                     getView().showSuccessfullyNoteAdded();
-                });
+                }));
     }
 
     void onActionClearDatabase() {
@@ -63,6 +65,7 @@ public class NotesPresenter extends BasePresenter<NotesPresenter.View> {
         void clearNotes();
         void showMessageTitleAndDescNotBeEmpty();
         void showSuccessfullyNoteAdded();
+        void showEmptyScreen();
         void showLoading();
         void hideLoading();
     }

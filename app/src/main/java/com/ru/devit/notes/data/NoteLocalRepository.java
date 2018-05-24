@@ -47,6 +47,11 @@ public class NoteLocalRepository implements NoteRepository {
     }
 
     @Override
+    public void deleteNoteById(int noteId){
+        doBackgroundTask(() -> noteDao.deleteNoteById(noteId)).subscribe();
+    }
+
+    @Override
     public void clearDatabase() {
         doBackgroundTask(noteDao::clearDatabase).subscribe();
     }
@@ -56,6 +61,11 @@ public class NoteLocalRepository implements NoteRepository {
         return Single.fromCallable(() -> noteDao.insertNote(mapper.fromNote(note)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public void updateNoteById(int noteId, String noteTitle , String noteDesc){
+        doBackgroundTask(() -> noteDao.updateNoteById(noteId , noteTitle , noteDesc)).subscribe();
     }
 
     private Completable doBackgroundTask(Action action){

@@ -25,9 +25,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class ImageSaverToDisk {
-
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
     public Completable saveImage(Bitmap image , String fileName) {
         return Completable.fromAction(() -> {
             String imageFileName = fileName + ".jpg";
@@ -40,14 +37,15 @@ public class ImageSaverToDisk {
             if (success) {
                 File imageFile = new File(storageDir, imageFileName);
                 try {
-                    OutputStream fOut = new FileOutputStream(imageFile);
+                    OutputStream fOut = new FileOutputStream(imageFile , false);
                     image.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                    fOut.flush();
                     fOut.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }})
-                .subscribeOn(Schedulers.from(executorService))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

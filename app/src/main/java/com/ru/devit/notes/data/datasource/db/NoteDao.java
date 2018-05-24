@@ -22,6 +22,12 @@ public interface NoteDao {
     @Insert
     long insertNote(NoteEntity noteEntity);
 
+    @Query("DELETE FROM note_table WHERE noteId = :noteId")
+    void deleteNoteById(int noteId);
+
     @Query("DELETE FROM note_table")
     void clearDatabase();
+
+    @Query("UPDATE note_table SET title = :noteTitle , description = :noteDesc WHERE noteId = :noteId")
+    void updateNoteById(int noteId, String noteTitle, String noteDesc);
 }
